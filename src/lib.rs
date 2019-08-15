@@ -85,9 +85,9 @@ impl<T : Clone> SinglyLinkedList<T>{
 
         match temp_head {
             Some(head) => {
-                let &mut th = SinglyLinkedListNode::create_node(Some(ele));
-                self.head = th.unwrap().set_next_node(Some(head));
-                self.head = th;
+                let mut th = SinglyLinkedListNode::create_node(Some(ele));
+                th.as_mut().set_next_node(Some(head));
+                self.head = th.clone();
                 self.len += 1;
             }
             None => {
