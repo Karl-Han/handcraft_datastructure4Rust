@@ -4,28 +4,28 @@ pub mod linked_list {
     use std::fmt::Debug;
     
     pub trait LinkedListNode<T : Clone + Debug> {
-        fn create_node<'a>(content : Option<T>) -> Option<Rc<RefCell<Box<Self>>>>;
+        fn create_node<'a>(content : Option<T>) -> Option<Rc<RefCell<Self>>>;
         fn set_node(&mut self, content : Option<T>);
-        fn set_next_node(&mut self, node : Option<Rc<RefCell<Box<Self>>>>);
-        fn get_next_node(&self) -> Option<Rc<RefCell<Box<Self>>>>;
+        fn set_next_node(&mut self, node : Option<Rc<RefCell<Self>>>);
+        fn get_next_node(&self) -> Option<Rc<RefCell<Self>>>;
     }
     
-    type SLLN<T> = Option<Rc<RefCell<Box<SinglyLinkedListNode<T>>>>>;
+    type SLLN<T> = Option<Rc<RefCell<SinglyLinkedListNode<T>>>>;
     
     #[derive(Clone, Debug)]
     pub struct SinglyLinkedListNode<T : Clone + Debug> {
         content : T,
-        next : Option<Rc<RefCell<Box<Self>>>>
+        next : Option<Rc<RefCell<Self>>>
     }
     
     impl<T : Clone + Debug> LinkedListNode<T> for SinglyLinkedListNode<T> {
-        fn create_node<'a>(content : Option<T>) -> Option<Rc<RefCell<Box<Self>>>> {
+        fn create_node<'a>(content : Option<T>) -> Option<Rc<RefCell<Self>>> {
             match content {
                 Some(content) => {
-                    Some(Rc::new(RefCell::new(Box::new(SinglyLinkedListNode{
+                    Some(Rc::new(RefCell::new(SinglyLinkedListNode{
                         content,
                         next : Self::create_node(None)
-                    }))))
+                    })))
                 }
                 None => {
                     None
@@ -44,7 +44,7 @@ pub mod linked_list {
             }
         }
     
-        fn set_next_node(&mut self, node : Option<Rc<RefCell<Box<Self>>>>){
+        fn set_next_node(&mut self, node : Option<Rc<RefCell<Self>>>){
             match node {
                 Some(node) => {
                     self.next = Some(Rc::clone(&node));
@@ -55,7 +55,7 @@ pub mod linked_list {
             }
         }
     
-        fn get_next_node(&self) -> Option<Rc<RefCell<Box<Self>>>>{
+        fn get_next_node(&self) -> Option<Rc<RefCell<Self>>>{
             match &self.next {
                 Some(next_node) => {
                     Some(Rc::clone(&next_node))
@@ -69,7 +69,7 @@ pub mod linked_list {
     
     #[derive(Clone, Debug)]
     pub struct SinglyLinkedList<T : Clone + Debug> {
-        head : Option<Rc<RefCell<Box<SinglyLinkedListNode<T>>>>>,
+        head : Option<Rc<RefCell<SinglyLinkedListNode<T>>>>,
         len : u32
     }
     
@@ -81,7 +81,7 @@ pub mod linked_list {
             }
         }
 
-        pub fn get_head_node(&self) -> Option<Rc<RefCell<Box<SinglyLinkedListNode<T>>>>> {
+        pub fn get_head_node(&self) -> Option<Rc<RefCell<SinglyLinkedListNode<T>>>> {
             return Some(Rc::clone(&self.head.clone().unwrap()));
         }
     
@@ -111,9 +111,9 @@ pub mod linked_list {
             }
         }
     
-        pub fn tail_insert_node(&mut self, node : Option<Rc<RefCell<Box<SinglyLinkedListNode<T>>>>>) {
+        pub fn tail_insert_node(&mut self, node : Option<Rc<RefCell<SinglyLinkedListNode<T>>>>) {
             let mut temp_list_iterator = self.clone().iter();
-            let mut temp_ele : Option<Rc<RefCell<Box<SinglyLinkedListNode<T>>>>> = None;
+            let mut temp_ele : Option<Rc<RefCell<SinglyLinkedListNode<T>>>> = None;
             
             while let Some(ele) = temp_list_iterator.next_node() {
                 temp_ele = Some(ele);
@@ -129,7 +129,7 @@ pub mod linked_list {
         }
     
         /// It has to be implemented by tail insert, because `node` could be another list's node
-        pub fn add_node(&mut self, node : Option<Rc<RefCell<Box<SinglyLinkedListNode<T>>>>>){
+        pub fn add_node(&mut self, node : Option<Rc<RefCell<SinglyLinkedListNode<T>>>>){
             if let None = self.head {
                 self.head = node;
                 return;
@@ -147,12 +147,12 @@ pub mod linked_list {
     
     #[derive(Clone, Debug)]
     pub struct SinglyLinkedListIterator<T : Clone + Debug> {
-        pos : Option<Rc<RefCell<Box<SinglyLinkedListNode<T>>>>>
+        pos : Option<Rc<RefCell<SinglyLinkedListNode<T>>>>
     }
     
     impl<T : Clone + Debug> SinglyLinkedListIterator<T> {
 
-        pub fn new(head : Option<Rc<RefCell<Box<SinglyLinkedListNode<T>>>>>) -> Self{
+        pub fn new(head : Option<Rc<RefCell<SinglyLinkedListNode<T>>>>) -> Self{
             match head {
                 Some(head) => {
                     SinglyLinkedListIterator{
