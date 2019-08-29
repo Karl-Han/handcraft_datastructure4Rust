@@ -4,7 +4,10 @@ pub mod linked_list {
     use std::rc::Rc;
 
     pub trait LinkedListNode<T: Clone + Debug> {
-        fn create_node(content: Option<T>) -> Option<Rc<RefCell<Self>>>;
+        fn create_node(
+            content: Option<T>,
+            next_node: Option<Rc<RefCell<Self>>>,
+        ) -> Option<Rc<RefCell<Self>>>;
         fn set_node(&mut self, content: Option<T>);
         fn set_next_node(&mut self, node: Option<Rc<RefCell<Self>>>);
         fn get_next_node(&self) -> Option<Rc<RefCell<Self>>>;
@@ -21,11 +24,14 @@ pub mod linked_list {
     }
 
     impl<T: Clone + Debug> LinkedListNode<T> for SinglyLinkedListNode<T> {
-        fn create_node(content: Option<T>) -> Option<Rc<RefCell<Self>>> {
+        fn create_node(
+            content: Option<T>,
+            next_node: Option<Rc<RefCell<Self>>>,
+        ) -> Option<Rc<RefCell<Self>>> {
             match content {
                 Some(content) => Some(Rc::new(RefCell::new(SinglyLinkedListNode {
                     content,
-                    next: Self::create_node(None),
+                    next: next_node,
                 }))),
                 None => None,
             }
@@ -48,7 +54,7 @@ pub mod linked_list {
                     self.next = Some(Rc::clone(&node));
                 }
                 None => {
-                    self.next = Self::create_node(None);
+                    self.next = Self::create_node(None, None);
                 }
             }
         }
@@ -90,14 +96,14 @@ pub mod linked_list {
             let temp_head = self.head.clone();
 
             match temp_head {
-                Some(head) => {
-                    let th = SinglyLinkedListNode::create_node(Some(ele));
-                    self.head = th.clone();
-                    th.unwrap().borrow_mut().set_next_node(Some(head));
+                Some(_head) => {
+                    self.head = SinglyLinkedListNode::create_node(Some(ele), self.head.clone());
+                    //self.head = th.clone();
+                    //th.unwrap().borrow_mut().set_next_node(Some(head));
                     self.len += 1;
                 }
                 None => {
-                    self.head = SinglyLinkedListNode::create_node(Some(ele));
+                    self.head = SinglyLinkedListNode::create_node(Some(ele), None);
                 }
             }
         }
@@ -193,8 +199,8 @@ fn single_linked_list_test() {
 
     let mut list: SinglyLinkedList<usize> = SinglyLinkedList::new();
 
-    list.tail_insert_node(SinglyLinkedListNode::create_node(Some(3)));
-    list.add_node(SinglyLinkedListNode::create_node(Some(2)));
+    list.tail_insert_node(SinglyLinkedListNode::create_node(Some(3), None));
+    list.add_node(SinglyLinkedListNode::create_node(Some(2), None));
     list.head_insert_element(1);
 
     let vec: Vec<usize> = list.iter().collect();
@@ -208,7 +214,7 @@ fn single_linked_list_test() {
     assert_eq!(vec, vec![5, 1, 3, 2]);
 
     let mut list2: SinglyLinkedList<usize> = SinglyLinkedList::new();
-    list2.tail_insert_node(SinglyLinkedListNode::create_node(Some(7)));
+    list2.tail_insert_node(SinglyLinkedListNode::create_node(Some(7), None));
     list2.head_insert_element(6);
     list2.add_node(list.get_head_node());
 
